@@ -46,6 +46,16 @@ def where_am_i(path = None):
             return dp_computer_path_metrics
         else:
             return dp_computer_path
+        
+    elif socket.gethostname() == 'qbi1':
+        if path == 'datasets':
+            return 'home/davidp/python_repos/tomodl/ToMoDL/datasets/'
+        elif path == 'models':
+            return 'home/davidp/python_repos/tomodl/ToMoDL/models/'
+        elif path == 'metrics':
+            return 'home/davidp/python_repos/tomodl/ToMoDL/metrics/'
+        else:
+            return dp_computer_path
     else:
         print('Computer not found')
         sys.exit(0)

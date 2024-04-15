@@ -5,7 +5,7 @@ import ToMoDL.utilities.dataloading_utilities as dlutils
 from config import model_system_dict, trainer_system_dict, dataloader_system_dict
 from torch.utils.data import DataLoader
 import torch
-import wandb
+# import wandb
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # run = wandb.init(project="deepopt")
@@ -13,13 +13,19 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Load model
 # artifact_tomodl = run.use_artifact('/path/to/artifact', type='model')   # '/datasets/x20/140114_5dpf_body_20/'
 # artifact_tomodl_dir = artifact_tomodl.download()
-artifact_tomodl_dir = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20/'
+
+# DP win
+# artifact_tomodl_dir = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20/'
+# DP ubuntu qbi1 
+artifact_tomodl_dir = '/home/davidp/python_repos/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20'
 model_tomodl = MoDLReconstructor.load_from_checkpoint(Path(artifact_tomodl_dir) / "model.ckpt", kw_dictionary_model_system = model_system_dict)
 
 # Load dataset
-dataset_dict = {'root_folder' : 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20', # In our case, datasets/x20/140114_5dpf_body_20
-                'acceleration_factor' : 20,
-                'transform' : None}
+dataset_dict = {
+    # 'root_folder' : 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20', # In our case, datasets/x20/140114_5dpf_body_20
+    'root_folder' : '/home/davidp/python_repos/tomodl/ToMoDL/datasets/x20/140114_5dpf_body_20',
+    'acceleration_factor' : 20,
+    'transform' : None}
 
 test_dataset = dlutils.ReconstructionDataset(**dataset_dict)
 test_dataloader = DataLoader(test_dataset, 
