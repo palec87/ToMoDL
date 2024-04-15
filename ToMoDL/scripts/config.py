@@ -10,6 +10,11 @@ german_computer_path_datasets = '/data/marcos/datasets/'
 ariel_computer_path = '/home/marcos/DeepOPT'
 ariel_computer_path_datasets = '/Datos/DeepOPT'
 
+dp_computer_path = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/ToMoDL/'
+dp_computer_path_datasets = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/datasets/'
+dp_computer_path_metrics = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/metrics/'
+dp_computer_path_models = 'C://Users/David Palecek/Documents/Python_projects/tomodl/ToMoDL/ToMoDL/models/'
+
 def where_am_i(path = None):
 
     if socket.gethostname() in ['copote', 'copito']:
@@ -32,6 +37,15 @@ def where_am_i(path = None):
             return ariel_computer_path_datasets
         else:   
             return ariel_computer_path
+    elif socket.gethostname() == 'DESKTOP-SLRK827':
+        if path == 'datasets':
+            return dp_computer_path_datasets
+        elif path == 'models':
+            return dp_computer_path_models
+        elif path == 'metrics':
+            return dp_computer_path_metrics
+        else:
+            return dp_computer_path
     else:
         print('Computer not found')
         sys.exit(0)

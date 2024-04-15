@@ -28,7 +28,7 @@ from pytorch_lightning.loggers import WandbLogger
 from torchvision import transforms as T
 from pytorch_msssim import SSIM
 # from torchmetrics import StructuralSimilarityIndexMeasure as SSIM
-from torchmetrics import MultiScaleStructuralSimilarityIndexMeasure as MSSSIM
+from torchmetrics.image import MultiScaleStructuralSimilarityIndexMeasure as MSSSIM
 
 # Options for folding menu
 use_default_model_dict = True
@@ -66,17 +66,21 @@ def runs(testing_options):
                             'loss_dict': loss_dict,                        
                             'track_train': True,
                             'track_val': True,
-                            'track_test': True}
+                            'track_test': True,
+                            'save_model': True,  # this was a bug, throwing an error in the TrainerSystem class, process_kwdictionary in models_system.py
+                            'save_path': model_folder,  # same as above
+                            'load_model': False,  # same as above
+                            }
     
     # PL Trainer and W&B logger dictionaries
     if use_default_trainer_dict == True:
                 
         logger_dict = {'project':'deepopt',
-                        'entity': 'omarcos', 
+                        'entity': 'dpalec', 
                         'log_model': True}
 
-        lightning_trainer_dict = {'max_epochs': 40,
-                                  'log_every_n_steps': 10,
+        lightning_trainer_dict = {'max_epochs': 2,  # orig value 40
+                                  'log_every_n_steps': 2,  # orig value 10
                                   'check_val_every_n_epoch': 1,
                                   'gradient_clip_val' : 0.5,
                                   'accelerator' : 'gpu', 
@@ -85,12 +89,12 @@ def runs(testing_options):
                                   'default_root_dir': model_folder}
 
         trainer_dict = {'lightning_trainer_dict': lightning_trainer_dict,
-                        'use_k_folding': True, 
+                        'use_k_folding': False, 
                         'track_checkpoints': True,
-                        'epoch_number_checkpoint': 10,
+                        'epoch_number_checkpoint': 5,  # orig value 10
                         'use_swa' : False,
                         'use_accumulate_batches': False,
-                        'k_fold_number_datasets': 2,
+                        'k_fold_number_datasets': 1,
                         'use_logger' : True,
                         'resume':'allow',
                         'logger_dict': logger_dict,
@@ -101,7 +105,7 @@ def runs(testing_options):
                         'batch_accumulation_start_epoch': 0, 
                         'profiler': profiler,
                         'restore_fold': False,
-                        'fold_number_restore': 2,
+                        'fold_number_restore': 1,
                         'acc_factor_restore': 22}
 
     # Dataloader dictionary
@@ -126,8 +130,12 @@ def runs(testing_options):
                            'sampling_method' : 'equispaced-linear',
                            'shuffle_data' : True,
                            'data_transform' : data_transform,
-                           'num_workers' : 8}
+                           'num_workers' : 2,  # original value 8
+                           'use_subset_by_part': False}  # this was a bug
     
+    if 'cpu' in testing_options:
+        lightning_trainer_dict['accelerator'] = 'cpu'
+        
     # Create Custom trainer
     if 'train_ssim' in testing_options:
 
@@ -143,7 +151,9 @@ def runs(testing_options):
         model_system_dict['loss_dict']['loss_name'] = 'psnr'
 
         trainer = trutils.TrainerSystem(trainer_dict, dataloader_dict, model_system_dict)
-        trainer.k_folding()
+        trainer.train_model()
+        # trainer.k_folding()
+
 
 if __name__ == '__main__':
 
@@ -153,6 +163,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--train_psnr', help = 'Train w/PSNR loss with optimal hyperparameters', action="store_true")
     parser.add_argument('--train_ssim', help = 'Train w/SSIM loss with optimal hyperparameters', action="store_true")
+    parser.add_argument('--cpu', help = 'Use CPU', action="store_true")
     
     args = parser.parse_args()
 
@@ -166,5 +177,9 @@ if __name__ == '__main__':
         print('Training UNET with SSIM loss...')
         train_options.append('train_ssim')
     
+    if args.cpu:
+
+        print('Training on CPU')
+        train_options.append('cpu')
 
     runs(train_options)

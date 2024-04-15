@@ -25,7 +25,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 from . import unet
-import wandb 
+# import wandb 
 from timm.scheduler import TanhLRScheduler
 
 # Modify for multi-gpu
@@ -204,7 +204,6 @@ class MoDLReconstructor(pl.LightningModule):
 
             return msssim_loss
 
-    
     def configure_optimizers(self):
         '''
         Configure optimizer
@@ -228,6 +227,7 @@ class MoDLReconstructor(pl.LightningModule):
         Lr scheduler step
         '''
         scheduler.step(epoch=self.current_epoch)
+
     def process_kwdictionary(self, kw_dict):
         '''
         Process keyword dictionary.
@@ -279,7 +279,7 @@ class MoDLReconstructor(pl.LightningModule):
         cax = fig.add_axes([ax[1].get_position().x1+0.01,ax[1].get_position().y0,0.02,ax[1].get_position().height])
         plt.colorbar(im, cax = cax)
 
-        wandb.log({'{}_plot_{}'.format(phase, self.current_epoch): fig})
+        # wandb.log({'{}_plot_{}'.format(phase, self.current_epoch): fig})
         plt.close(fig)
 
     def log_plot(self, target, prediction, phase):
@@ -305,7 +305,7 @@ class MoDLReconstructor(pl.LightningModule):
         plt.colorbar(im, cax = cax)
 
         plt.close(fig)
-        wandb.log({'{}_plot_{}'.format(phase, self.current_epoch): fig})
+        # wandb.log({'{}_plot_{}'.format(phase, self.current_epoch): fig})
 
 
     def log_samples(self, batch, model_reconstruction):
@@ -318,9 +318,9 @@ class MoDLReconstructor(pl.LightningModule):
         image_tensor = [unfiltered_us_rec[0,...], filtered_us_rec[0,...], filtered_fs_rec[0,...], model_reconstruction[0, ...]]
 
         image_grid = torchvision.utils.make_grid(image_tensor)
-        image_grid = wandb.Image(image_grid, caption="Left: Unfiltered undersampled backprojection\n Center 1 : Filtered undersampled backprojection\nCenter 2: Filtered fully sampled\n Right: MoDL reconstruction")
+        # image_grid = wandb.Image(image_grid, caption="Left: Unfiltered undersampled backprojection\n Center 1 : Filtered undersampled backprojection\nCenter 2: Filtered fully sampled\n Right: MoDL reconstruction")
 
-        wandb.log({'images {}'.format(self.current_epoch): image_grid})
+        # wandb.log({'images {}'.format(self.current_epoch): image_grid})
 
     def load_model(self):
         '''
@@ -545,8 +545,8 @@ class UNetReconstructor(pl.LightningModule):
             scheduler = TanhLRScheduler(optimizer, self.max_epochs-1)
             
             return [optimizer], [{"scheduler": scheduler, "interval": "epoch"}]
-            
-    def lr_scheduler_step(self, scheduler, optimizer_idx, metric):
+    
+    def lr_scheduler_step(self, scheduler, metric):
         '''
         Lr scheduler step
         '''
@@ -561,15 +561,22 @@ class UNetReconstructor(pl.LightningModule):
         print('Loading model from {}'.format(self.load_path))
         self.model.load_state_dict(torch.load(self.load_path))
 
-    def save_model(self):
+    # why not refactor into some model parent class of MoDLReconstructor and UNetReconstructor?
+    def save_model(self, fold):
         '''
         TO-DO: 
         * Add method for model loading from checkpoint
             * Load names from versions and choose best k.
         '''
-        path = '/home/obanmarcos/Balseiro/DeepOPT/saved_models/'+self.save_path+'.pth'
-        print('Saving model at {}'.format(path))
-        torch.save(self.model.state_dict(), path)
+        # path = '/home/obanmarcos/Balseiro/DeepOPT/saved_models/'+self.save_path+'.pth'
+        # print('Saving model at {}'.format(path))
+        # torch.save(self.model.state_dict(), path)
+        try:
+            path = 'C://Users/David Palecek/Documents/Python_projects/tomodl/SavedModels/'+'model'+'.pth'
+            print('Saving model at {}'.format(self.save_path))
+            torch.save(self.model.state_dict(), path)
+        except:
+            pass
 
     def process_kwdictionary(self, kw_dict):
         '''
@@ -581,6 +588,7 @@ class UNetReconstructor(pl.LightningModule):
         self.optimizer_dict = kw_dict['optimizer_dict']
         self.kw_dictionary_unet = kw_dict['kw_dictionary_unet']
         self.loss_dict = kw_dict['loss_dict']
+        self.max_epochs = kw_dict['max_epochs']
 
         self.track_train = kw_dict['track_train']
         self.track_val = kw_dict['track_val']
@@ -627,9 +635,9 @@ class UNetReconstructor(pl.LightningModule):
         cax = fig.add_axes([ax[2].get_position().x1+0.01,ax[2].get_position().y0,0.02, ax[2].get_position().height])
         plt.colorbar(im, cax = cax)
 
-        wandb.log({'epoch':self.current_epoch, '{}_plot_{}'.format(phase, self.current_epoch): fig})
+        # wandb.log({'epoch':self.current_epoch, '{}_plot_{}'.format(phase, self.current_epoch): fig})
         
-        fig.close()
+        plt.close(fig)
 
     def log_samples(self, batch, model_reconstruction):
         '''
@@ -641,7 +649,7 @@ class UNetReconstructor(pl.LightningModule):
         image_tensor = [unfiltered_us_rec[0,...], filtered_us_rec[0,...], filtered_fs_rec[0,...], model_reconstruction[0, ...]]
 
         image_grid = torchvision.utils.make_grid(image_tensor)
-        image_grid = wandb.Image(image_grid, caption="Left: Unfiltered undersampled backprojection\n Center 1 : Filtered undersampled backprojection\nCenter 2: Filtered fully sampled\n Right: unet reconstruction")
+        # image_grid = wandb.Image(image_grid, caption="Left: Unfiltered undersampled backprojection\n Center 1 : Filtered undersampled backprojection\nCenter 2: Filtered fully sampled\n Right: unet reconstruction")
 
         self.log({'images {}'.format(self.current_epoch): image_grid})
 
@@ -653,10 +661,11 @@ class UNetReconstructor(pl.LightningModule):
         '''
         pass
     
-    def save_model(self, fold):
+    # second func definition
+    # def save_model(self, fold):
         
-        print('Saving model at {}'.format('/home/obanmarcos/Balseiro/DeepOPT/saved_models/'+self.save_path))
-        torch.save(self.model.state_dict(), self.save_path.format(fold))    
+    #     print('Saving model at {}'.format('/home/obanmarcos/Balseiro/DeepOPT/saved_models/'+self.save_path))
+    #     torch.save(self.model.state_dict(), self.save_path.format(fold))    
 
     @staticmethod
     def normalize_image_01(images):
