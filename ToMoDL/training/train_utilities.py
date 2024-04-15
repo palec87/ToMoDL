@@ -7,6 +7,7 @@ import os
 import os, sys
 from re import S
 import names
+import pdb
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -176,6 +177,8 @@ class TrainerSystem():
         
         # To-Do: Option for non-available acceleration factors (RUN ProcessDatasets)
         self.folders_datasets_list = [self.datasets_folder+'x{}/'.format(self.acceleration_factor)+x for x in os.listdir(self.datasets_folder+'x{}'.format(self.acceleration_factor))]
+        print('this is used for k-fold input', self.folders_datasets_list)
+        
         # Same for all acc factors
         self.folders_datasets_list.sort()
 
@@ -271,6 +274,62 @@ class TrainerSystem():
             counts[i] = counts.get(i, 0) + 1
         
         return counts
+    
+    def generate_dataloader(self):
+        '''
+        Generate dataloader based on dataloader_kwdict
+        '''
+        # Train and validation dataloader
+        train_val_datasets = []
+        
+        for enum, folder in enumerate(self.folders_datasets_list):
+            
+            dataset_dict = {'root_folder' : folder, 
+                            'acceleration_factor' : self.acceleration_factor,
+                            'transform' : self.data_transform}
+
+            train_val_datasets.append(dlutils.ReconstructionDataset(**dataset_dict))
+        
+        train_val_datasets = ConcatDataset(train_val_datasets)
+        
+        train_val_lengths = [int(len(train_val_datasets)*self.train_factor),
+                             int(len(train_val_datasets)*self.val_factor)]
+        
+        # Possible non-zero sum
+        if sum(train_val_lengths) != len(train_val_datasets):
+
+            train_val_lengths[0] += (len(train_val_datasets)- sum(train_val_lengths))
+
+        train_dataset, val_dataset = random_split(train_val_datasets, train_val_lengths)
+
+        train_dataloader = DataLoader(train_dataset, 
+                                batch_size = self.batch_size,
+                                shuffle = True,
+                                num_workers = self.num_workers)
+
+        val_dataloader = DataLoader(val_dataset, 
+                                batch_size = self.batch_size,
+                                shuffle = False,
+                                num_workers = self.num_workers)
+        
+        test_datasets = []
+        
+        for enum, folder in enumerate(self.folders_datasets_list):
+            
+            dataset_dict = {'root_folder' : folder, 
+                                'acceleration_factor' : self.acceleration_factor,
+                                'transform' : self.data_transform}
+
+            test_datasets.append(dlutils.ReconstructionDataset(**dataset_dict))
+        
+        test_dataset = ConcatDataset(test_datasets)
+
+        test_dataloader = DataLoader(test_dataset, 
+                                batch_size = self.batch_size,
+                                shuffle = False,
+                                num_workers = self.num_workers)
+
+        return train_dataloader, val_dataloader, test_dataloader
 
     def generate_K_folding_dataloader(self):
         '''
@@ -370,7 +429,12 @@ class TrainerSystem():
         '''
         
         # Create dataloaders
-        train_dataloader, val_dataloader, test_dataloader = self.generate_K_folding_dataloader()
+        # DP: different method based on use_k_folding
+        # works and can be refactored.
+        if self.use_k_folding:
+            train_dataloader, val_dataloader, test_dataloader = self.generate_K_folding_dataloader()
+        else:
+            train_dataloader, val_dataloader, test_dataloader = self.generate_dataloader()
 
         # PL train model + Update wandb
         trainer = self.create_trainer()
@@ -381,7 +445,8 @@ class TrainerSystem():
         elif self.model_system_method == 'unet':
             self.model = modsys.UNetReconstructor(self.model_system_dict)
 
-        self.model.log('k_fold', self.current_fold)
+        if self.use_k_folding:
+            self.model.log('k_fold', self.current_fold)
         # W&B logger
         # wandb.watch(self.model)
         
@@ -392,13 +457,18 @@ class TrainerSystem():
                     train_dataloaders= train_dataloader,
                     val_dataloaders = val_dataloader)
 
-        self.model.save_model(self.current_fold)
+        # DP: this is full of problems, path in models_system.save_model is hardcoded, does not take params
+        try:
+            self.model.save_model(self.current_fold)
+        except AttributeError:
+            self.model.save_model(-1)
 
         del train_dataloader, val_dataloader, test_dataloader, self.model, trainer
         
-        self.wandb_logger.finalize('success')
+        # DP: remove wandb refs
+        # self.wandb_logger.finalize('success')
 
-        wandb.finish()
+        # wandb.finish()
 
     def k_folding(self):
         '''
@@ -406,7 +476,7 @@ class TrainerSystem():
         '''
         print('Running K-Folding...')
         assert(self.use_k_folding == True)
-
+        print(self.k_fold_max, self.use_k_folding)
         for k_fold in range(self.k_fold_max):
             
             if (self.restore_fold == True) and (self.acceleration_factor == self.acc_factor_restore) and (self.current_fold < self.fold_number_restore):
@@ -427,7 +497,3 @@ class TrainerSystem():
             self.wandb_logger.finalize('success')
             print('{} fold finished succesfully!'.format(self.current_fold))
             self.current_fold += 1
-        
-            
-
-        
