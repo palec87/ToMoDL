@@ -12,16 +12,18 @@ try:
     use_tomopy = False
     use_scikit = False
 except ModuleNotFoundError:
-    import torch
-    import torch.nn as nn
-    import torch.nn.functional as F
-    
     print('Torch-Radon not available!')
+    from skimage.transform import radon, iradon
+    
     use_torch_radon = False
     use_tomopy = False
     use_scikit = True
 
-from skimage.transform import radon, iradon
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
 import matplotlib.pyplot as plt 
 import numpy as np
 from . import unet
