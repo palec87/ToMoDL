@@ -2,10 +2,9 @@
 K-Folding script
 author: obanmarcos
 '''
-import os
-import os, sys
+import sys
 from config import * 
-import wandb
+# import wandb
 
 sys.path.append(where_am_i())
 
@@ -45,7 +44,18 @@ model_dict = {'psnr':
                      '2':'omarcos/deepopt/model-lyt89k5t:v0',
                      '3':'omarcos/deepopt/model-2s01fb36:v0'
                     },
-                    'order_0' : ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140519_5dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_lower tail_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140714_5dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140315_3dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_upper tail_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_body_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140315_1dpf_head_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_upper tail_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_body_2', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_lower tail_2']
+                    'order_0' : ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140519_5dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_lower tail_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140714_5dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140315_3dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_upper tail_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_body_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140315_1dpf_head_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140117_3dpf_upper tail_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_body_2',
+                                 '/home/obanmarcos/Balseiro/DeepOPT/datasets/x2/140114_5dpf_lower tail_2']
                 },
                 '6':
                 {'models':
@@ -54,7 +64,18 @@ model_dict = {'psnr':
                      '2':'omarcos/deepopt/model-d58tvubf:v0',
                      '3':'omarcos/deepopt/model-1erq431o:v0'
                     },
-                'order_0': ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_lower tail_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140714_5dpf_head_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_lower tail_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_upper tail_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_body_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140519_5dpf_head_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_head_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140315_3dpf_head_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_body_6','/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140315_1dpf_head_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_upper tail_6', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_head_6']
+                'order_0': ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_lower tail_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140714_5dpf_head_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_lower tail_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_upper tail_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_body_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140519_5dpf_head_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_head_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140315_3dpf_head_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_body_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140315_1dpf_head_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140117_3dpf_upper tail_6',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x6/140114_5dpf_head_6']
                 },
                 '10': 
                 {'models':
@@ -62,7 +83,18 @@ model_dict = {'psnr':
                      '1':'omarcos/deepopt/model-oyxvdcj7:v0',
                      '2':'omarcos/deepopt/model-3fmp7pqn:v0',
                      '3':'omarcos/deepopt/model-zx2zo5x1:v0'},
-                'order_0': ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_upper tail_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140315_3dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_body_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140315_1dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_upper tail_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140519_5dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_lower tail_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140714_5dpf_head_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_lower tail_10', '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_body_10']
+                'order_0': ['/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_upper tail_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140315_3dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_body_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140315_1dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_upper tail_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140519_5dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140117_3dpf_lower tail_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140714_5dpf_head_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_lower tail_10',
+                            '/home/obanmarcos/Balseiro/DeepOPT/datasets/x10/140114_5dpf_body_10']
                 },
                 '14':
                 {'models':
@@ -184,7 +216,7 @@ def runs(testing_options):
     # Model parameters
         modl_dict = {'use_torch_radon': False,
                     'metric': 'psnr',
-                    'K_iterations' : 6,
+                    'K_iterations' : 6,  # original 6
                     'number_projections_total' : 720,
                     'acceleration_factor': 10,
                     'image_size': 100,
@@ -217,7 +249,7 @@ def runs(testing_options):
                         'track_train': True,
                         'track_val': True,
                         'track_test': True,
-                        'max_epochs': 20, 
+                        'max_epochs': 2, # original 20
                         'track_alternating_admm':False,
                         'tv_iters': 40,
                         'title': 'HyperParams_Search',
@@ -245,12 +277,12 @@ def runs(testing_options):
                                   'default_root_dir': where_am_i('models')}
 
         trainer_dict = {'lightning_trainer_dict': lightning_trainer_dict,
-                        'use_k_folding': True, 
+                        'use_k_folding': False,  # original True 
                         'track_checkpoints': True,
                         'epoch_number_checkpoint': 10,
                         'use_swa' : False,
                         'use_accumulate_batches': False,
-                        'k_fold_number_datasets': 3,
+                        'k_fold_number_datasets': 1,  # original 3
                         'use_logger' : True,
                         'resume':'allow',
                         'logger_dict': logger_dict,
@@ -285,7 +317,9 @@ def runs(testing_options):
                            'sampling_method' : 'equispaced-linear',
                            'shuffle_data' : True,
                            'data_transform' : data_transform,
-                           'num_workers' : 0}
+                           'num_workers' : 0,
+                           'use_subset_by_part': False,  # DP: missing Key in the dictionary
+                           }
     
     if 'load_unet' in testing_options:
 
@@ -314,13 +348,15 @@ def runs(testing_options):
     if 'train_psnr' in testing_options:
         
         model_system_dict['loss_dict']['loss_name'] = 'psnr'
-        accelerations = [str(i) for i in range(26,-2,-4)]
+        # accelerations = [str(i) for i in range(26,-2,-4)]
+        accelerations = ['20']
 
         for acceleration in accelerations:
             
             dataloader_dict['acceleration_factor'] = int(acceleration)
             
             # Rotation of dataset
+            # print(dataloader_dict)
             trainer_system = trutils.TrainerSystem(trainer_dict, dataloader_dict, model_system_dict)
 
             datasets_list = model_dict['psnr'][acceleration]['order_0']
@@ -331,12 +367,12 @@ def runs(testing_options):
                 model_system_dict['load_path'] = ''
                 model_system_dict['save_path'] = 'MoDL_FA{}_Kfold{}'.format(acceleration, fold)
 
-                wandb.init(project = 'MoDL', name = model_system_dict['save_path'])
+                # wandb.init(project = 'MoDL', name = model_system_dict['save_path'])
 
                 # Model U-Net
                 model = MoDLReconstructor(model_system_dict)    
 
-                wandb.watch(model)
+                # wandb.watch(model)
 
                 train_dataloader, val_dataloader, test_dataloader = trainer_system.generate_K_folding_dataloader()
                 trainer_system.current_fold += 1
@@ -355,7 +391,7 @@ def runs(testing_options):
                 torch.cuda.empty_cache()
                 del train_dataloader, val_dataloader, model.model
                 del model
-                wandb.finish()
+                # wandb.finish()
         
 
 if __name__ == '__main__':
