@@ -18,7 +18,7 @@ resnet_options_dict = {'number_layers': 8,
                         'init_method': 'xavier'}
 
 # Model parameters
-modl_dict = {'use_torch_radon': False,
+modl_dict = {'use_torch_radon': True,#False, # DP change
             'number_layers': 8,
             'K_iterations' : 8,
             'number_projections_total' : 720,

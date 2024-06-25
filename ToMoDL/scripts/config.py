@@ -49,13 +49,13 @@ def where_am_i(path = None):
         
     elif socket.gethostname() == 'qbi1':
         if path == 'datasets':
-            return 'home/davidp/python_repos/tomodl/ToMoDL/datasets/'
+            return '/home/davidp/python_repos/tomodl/ToMoDL/datasets/'
         elif path == 'models':
-            return 'home/davidp/python_repos/tomodl/ToMoDL/models/'
+            return '/home/davidp/python_repos/tomodl/ToMoDL/models/'
         elif path == 'metrics':
-            return 'home/davidp/python_repos/tomodl/ToMoDL/metrics/'
+            return '/home/davidp/python_repos/tomodl/ToMoDL/metrics/'
         else:
-            return dp_computer_path
+            return '/home/davidp/python_repos/tomodl/ToMoDL/ToMoDL/'
     else:
         print('Computer not found')
         sys.exit(0)

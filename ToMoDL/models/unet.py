@@ -8,7 +8,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 try:
-    from torch_radon import Radon as thrad
+    from torch_radon24 import Radon as thrad
+    # from torch_radon import Radon as thrad
     from torch_radon.solvers import cg
     
     use_torch_radon = True

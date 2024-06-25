@@ -6,9 +6,11 @@ from config import model_system_dict, trainer_system_dict, dataloader_system_dic
 from torch.utils.data import DataLoader
 import torch
 import socket
+from torch_radon24 import Radon as thrad
 import pdb
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 
 # Load model
 # DP win
@@ -40,6 +42,24 @@ fs_im = fs_fil_im.numpy().squeeze()
 
 print(us_unfil_im.shape, us_unfil_im.to(device).shape)
 
+## testing the radon transform
+radon = thrad(image_size=us_unfil_im.shape[-1],
+              n_angles=720, circle=True,
+              det_count=None, device=device)
+sinogram = radon(us_unfil_im.to(device))
+print(sinogram.shape)
+
+backproj = radon.filter_backprojection(sinogram)
+print(backproj.shape)
+
+plt.figure()
+plt.subplot(131)
+plt.imshow(sinogram[0,0,...].cpu().numpy())
+plt.subplot(132)
+plt.imshow(backproj[0,0,...].cpu().numpy())
+plt.subplot(133)
+plt.imshow(us_unfil_im[0,0,...].cpu().numpy())
+plt.show()
 # pdb.set_trace()
 image_tomodl = model_tomodl(us_unfil_im.to(device))['dc'+str(model_tomodl.model.K)][0,0,...].detach().cpu().numpy() # Model Output
 

@@ -15,7 +15,8 @@ import pytorch_lightning as pl
 import torch.nn as nn
 import numpy as np
 try:
-    from torch_radon import Radon as thrad
+    from torch_radon24 import Radon as thrad
+    # from torch_radon import Radon as thrad
     from torch_radon.solvers import cg
 except ModuleNotFoundError:
     from skimage.transform import radon, iradon
@@ -27,6 +28,7 @@ import torchvision
 from . import unet
 # import wandb 
 from timm.scheduler import TanhLRScheduler
+import pdb
 
 # Modify for multi-gpu
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -52,7 +54,7 @@ class MoDLReconstructor(pl.LightningModule):
         self.save_hyperparameters(self.hparams)
 
     def forward(self, x):
-
+        # pdb.set_trace()
         return self.model(x)
     
     def training_step(self, batch, batch_idx):

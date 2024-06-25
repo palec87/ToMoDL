@@ -7,22 +7,24 @@ from config import *
 from concurrent.futures import process
 import os, sys
 
-# Where am I asks where you are
-sys.path.append(where_am_i())
+# # Where am I asks where you are
+# sys.path.append(where_am_i())
 
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from utilities import dataloading_utilities as dlutils
-from utilities.folders import *
+from ToMoDL.utilities import dataloading_utilities as dlutils
+from ToMoDL.utilities.folders import *
 from torch.utils.data import DataLoader, ConcatDataset
 
 def process_datasets(args_options):
     
-    folder_paths = ['/home/obanmarcos/Balseiro/DeepOPT/DataOPT/140415_5dpf_4X']
+    # folder_paths = ['/home/obanmarcos/Balseiro/DeepOPT/DataOPT/140415_5dpf_4X']
+    folder_paths = ['/home/davidp/data/deepOPT/full_fish/140415_5dpf_body_20']
 
-    zebra_dataset_dict = {'dataset_folder':'/home/obanmarcos/Balseiro/DeepOPT/datasets/full_fish',
+    zebra_dataset_dict = {#'dataset_folder':'/home/obanmarcos/Balseiro/DeepOPT/datasets/full_fish',
+                          'dataset_folder':'/home/davidp/data/deepOPT/full_fish/140415_5dpf_body_20/fs_filtered',
                           'experiment_name':'Bassi',
                           'img_resize' :100,
                           'load_shifts':False,

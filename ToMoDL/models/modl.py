@@ -5,7 +5,8 @@ This code git pull origin maincreates the model described in MoDL: Model-Based D
 """
 
 try:
-    from torch_radon import Radon as thrad
+    # from torch_radon import Radon as thrad
+    from torch_radon24 import Radon as thrad
     from torch_radon.solvers import cg
     
     use_torch_radon = True
@@ -27,6 +28,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt 
 import numpy as np
 from . import unet
+import pdb
 
 try:
     # Modify for multi-gpu
@@ -129,6 +131,7 @@ class dw(nn.Module):
         Params:
             - x (torch.Tensor): Image batch to be processed
         """
+        # pdb.set_trace()
         residual = torch.clone(x)    
         
         for layer in self.nw.values():
@@ -181,13 +184,21 @@ class Aclass:
         self.lam = kw_dictionary['lambda']
         self.use_torch_radon = kw_dictionary['use_torch_radon']
         self.use_scikit = kw_dictionary['use_scikit']
-        self.angles = np.linspace(0, 2*np.pi, self.number_projections,endpoint = False)
         self.det_count = int(np.ceil(np.sqrt(2)*self.img_size))
         
         if self.use_torch_radon == True:
-            self.radon = thrad(self.img_size, self.angles, clip_to_circle = False, det_count = self.det_count)
-        
+            print('using torch_radon')
+            # Marco's version
+            # self.radon = thrad(self.img_size, self.angles, clip_to_circle = False, det_count = self.det_count)
+            # Nhat's version
+            # angles are input as N, not linspace
+            self.radon = thrad(image_size=self.img_size,
+                               n_angles=self.number_projections,
+                               circle=False,
+                               det_count=None, device=device)
         elif self.use_scikit == True:
+            self.angles = np.linspace(0, 2*np.pi, self.number_projections, endpoint = False)
+            print('using scikit')
             class Radon:
                 def __init__(self, num_angles, circle=True):
                     self.num_angles = num_angles
@@ -215,11 +226,20 @@ class Aclass:
         Params:
             - img (torch.Tensor): Input tensor
         """
+        import pdb
+        print('img is cuda: {}'.format(img.is_cuda), img.shape)
 
-        sinogram = self.radon.forward(img)/self.img_size 
-        iradon = self.radon.backprojection(sinogram)*np.pi/self.number_projections
+        # Marco's version
+        # sinogram = self.radon.forward(img.to(device))/self.img_size
+        # iradon = self.radon.backprojection(sinogram)*np.pi/self.number_projections  
+
+        #Nhat
+        img_expand = img[None, None]
+        sinogram = self.radon(img_expand)/self.img_size
+        iradon = self.radon.filter_backprojection(sinogram)*np.pi/self.number_projections
+        iradon = iradon[0,0]
         del sinogram
-        output = iradon+self.lam*img
+        output = iradon + self.lam*img
         # print('output forward: {} {}'.format(output.max(), output.min()))
         # print('Term z max {}, min {}'.format((iradon/self.lam).max(), (iradon/self.lam).min()))
         # print('Term input max {}, min {}'.format(img.max(), img.min()))
@@ -295,7 +315,7 @@ class ToMoDL(nn.Module):
     Params:
         - x (torch.Tensor) : Backprojected sinogram, in image space    
     """
-    
+    # pdb.set_trace()
     self.out['dc0'] = x
 
     for i in range(1,self.K+1):
@@ -342,8 +362,13 @@ class ToMoDL(nn.Module):
     elif self.denoiser_method == 'resnet':
         self.resnet_options = kw_dictionary['resnet_options']
     
-    self.AtA_dictionary = {'image_size': self.image_size, 'number_projections': self.number_projections_total, 'lambda':self.lam, 'use_torch_radon': self.use_torch_radon, "use_scikit": self.use_scikit, "use_tomopy": self.use_tomopy}
-
+    self.AtA_dictionary = {'image_size': self.image_size,
+                           'number_projections': self.number_projections_total,
+                           'lambda':self.lam,
+                           'use_torch_radon': self.use_torch_radon,
+                           "use_scikit": self.use_scikit,
+                           "use_tomopy": self.use_tomopy}
+    # pdb.set_trace()
     self.AtA = Aclass(self.AtA_dictionary)
 
   def define_denoiser(self):
