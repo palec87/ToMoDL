@@ -138,7 +138,8 @@ class TrainerSystem():
         Create trainer based on current trainer_dict
         '''
 
-        self.trainer = pl.Trainer(**self.lightning_trainer_dict, profiler = self.profiler)
+        self.trainer = pl.Trainer(**self.lightning_trainer_dict,
+                                  profiler=self.profiler)
 
         return self.trainer
 
