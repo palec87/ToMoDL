@@ -151,3 +151,9 @@ trainer_dict = {'lightning_trainer_dict': lightning_trainer_dict,
 [2] Ronchetti, M. (2020). Torchradon: Fast differentiable routines for computed tomography. arXiv preprint arXiv:2009.14788.
 
 Explore the code and have fun reconstructing optical tomography projections with ToMoDL! If you have any questions or suggestions, feel free to reach out. 🤗🚀
+
+## Debugging
+
+David Palecek: Some scripts breaking because of this issue (tested pytorch-lightning 2.2.2, 2.2.4)
+https://github.com/Lightning-AI/pytorch-lightning/pull/19804/files
+Change your pytorch-lightning.core.saving.py accordingly
