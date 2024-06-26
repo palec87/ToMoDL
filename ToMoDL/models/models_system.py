@@ -650,20 +650,6 @@ class UNetReconstructor(pl.LightningModule):
 
         self.log({'images {}'.format(self.current_epoch): image_grid})
 
-    def load_model(self):
-        '''
-        TO-DO: 
-        * Add method for model loading from checkpoint
-            * Load names from versions and choose best k.
-        '''
-        pass
-    
-    # second func definition
-    # def save_model(self, fold):
-        
-    #     print('Saving model at {}'.format('/home/obanmarcos/Balseiro/DeepOPT/saved_models/'+self.save_path))
-    #     torch.save(self.model.state_dict(), self.save_path.format(fold))    
-
     @staticmethod
     def normalize_image_01(images):
         '''
@@ -671,15 +657,14 @@ class UNetReconstructor(pl.LightningModule):
         Params:
         - images (torch.Tensor): Tensor of 1-channel images
         '''
-        
         image_norm = torch.zeros_like(images)
 
         for i, image in enumerate(images):
-            
+
             image_norm[i,...] = ((image - image.mean())/(image.max()-image.min()))
 
-        return image_norm        
-    
+        return image_norm
+
     @staticmethod
     def normalize_image_std(images):
         '''
@@ -687,11 +672,10 @@ class UNetReconstructor(pl.LightningModule):
         Params:
         - images (torch.Tensor): Tensor of 1-channel images
         '''
-        
         image_norm = torch.zeros_like(images)
 
         for i, image in enumerate(images):
-            
+
             image_norm[i,...] = ((image - image.mean())/(image.std()))
 
-        return image_norm       
+        return image_norm
