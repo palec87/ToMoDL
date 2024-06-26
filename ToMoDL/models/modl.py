@@ -28,7 +28,6 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt 
 import numpy as np
 from . import unet
-import pdb
 
 try:
     # Modify for multi-gpu
@@ -226,20 +225,15 @@ class Aclass:
         Params:
             - img (torch.Tensor): Input tensor
         """
-        import pdb
-        print('img is cuda: {}'.format(img.is_cuda), img.shape)
-
         # Marco's version
         # sinogram = self.radon.forward(img.to(device))/self.img_size
         # iradon = self.radon.backprojection(sinogram)*np.pi/self.number_projections  
 
         #Nhat
-        img_expand = img[None, None]
-        sinogram = self.radon(img_expand)/self.img_size
+        sinogram = self.radon(img[None, None])/self.img_size
         iradon = self.radon.filter_backprojection(sinogram)*np.pi/self.number_projections
-        iradon = iradon[0,0]
         del sinogram
-        output = iradon + self.lam*img
+        output = iradon[0, 0] + self.lam * img
         # print('output forward: {} {}'.format(output.max(), output.min()))
         # print('Term z max {}, min {}'.format((iradon/self.lam).max(), (iradon/self.lam).min()))
         # print('Term input max {}, min {}'.format(img.max(), img.min()))
