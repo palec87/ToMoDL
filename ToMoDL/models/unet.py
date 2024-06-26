@@ -123,10 +123,10 @@ class outconv(nn.Module):
         x = self.conv(x)
         return x
 
-class unet(nn.Module):
+class UNet(nn.Module):
     def __init__(self, kw_dict):
         
-        super(unet, self).__init__()
+        super(UNet, self).__init__()
         
         self.process_kwdictionary(kw_dict)
 
