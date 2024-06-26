@@ -2,10 +2,6 @@
 This code provides with an easy way to avoid boilerplate for training and validating results.
 author: obanmarcos
 '''
-'''
-This code provides with an easy way to avoid boilerplate for training and validating results.
-author: obanmarcos
-'''
 import sys
 sys.path.append('~/DeepOPT/')
 
@@ -28,10 +24,10 @@ import torchvision
 from . import unet
 # import wandb 
 from timm.scheduler import TanhLRScheduler
-import pdb
 
 # Modify for multi-gpu
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
 class MoDLReconstructor(pl.LightningModule):
     '''
@@ -114,7 +110,6 @@ class MoDLReconstructor(pl.LightningModule):
             return msssim_loss
     
     def validation_step(self, batch, batch_idx):
-
         '''
         Validation step for modl. 
         Suffixes:
@@ -367,7 +362,8 @@ class MoDLReconstructor(pl.LightningModule):
             
             image_norm[i,...] = ((image - image.mean())/(image.std()))
 
-        return image_norm       
+        return image_norm
+
 
 class UNetReconstructor(pl.LightningModule):
     '''
@@ -382,9 +378,9 @@ class UNetReconstructor(pl.LightningModule):
         super().__init__()
 
         self.process_kwdictionary(kw_dictionary_model_system)
-        self.model = unet.unet(self.kw_dictionary_unet)
+        self.model = unet.UNet(self.kw_dictionary_unet)
         
-        if self.load_model == True:
+        if self.load_model is True:
 
             self.load_model()
 
@@ -394,18 +390,17 @@ class UNetReconstructor(pl.LightningModule):
 
         return self.model(x)
 
-    
     def training_step(self, batch, batch_idx):
-
         '''
         Validation step for unet. 
         Suffixes:
-            - 'us' stands for undersampled reconstruction (used as input with unfiltered backprojection)
+            - 'us' stands for undersampled reconstruction (used as input with unfiltered
+                backprojection)
             - 'fs' stands for fully sampled reconstruction
         '''
 
         unfiltered_us_rec, filtered_us_rec, filtered_fs_rec = batch
-        
+
         unet_rec = self.model(unfiltered_us_rec)
 
         if (self.track_test == True) and (batch_idx == 0):
